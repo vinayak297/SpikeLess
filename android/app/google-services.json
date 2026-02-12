@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "758607615307",
+    "project_id": "spikeless-49ea2",
+    "storage_bucket": "spikeless-49ea2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758607615307:android:5ae4b755ffc047bbfe04ce",
+        "android_client_info": {
+          "package_name": "com.example.spikeless"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "758607615307-ik0mmpq2chi2ehj5aapmvhcevra1f0nc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.spikeless",
+            "certificate_hash": "ff9726aa682a0d69aa637bc87bd8437a5cfaa61c"
+          }
+        },
+        {
+          "client_id": "758607615307-45iephfaeb6stae94fb3rculrnbsolhs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8NGLUEGNmWjCIeiNzWtE4tO3zpxmH8Yk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "758607615307-45iephfaeb6stae94fb3rculrnbsolhs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

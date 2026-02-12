@@ -1,10 +1,38 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-void main() {
+Future<UserCredential?> signInWithGoogle() async {
+  final GoogleSignInAccount? googleUser =
+      await GoogleSignIn().signIn();
+
+  if (googleUser == null) return null;
+
+  final GoogleSignInAuthentication googleAuth =
+      await googleUser.authentication;
+
+  final credential = GoogleAuthProvider.credential(
+    accessToken: googleAuth.accessToken,
+    idToken: googleAuth.idToken,
+  );
+
+  return await FirebaseAuth.instance
+      .signInWithCredential(credential);
+}
+
+
+
+
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const SpikeLessApp());
 }
+
 
 class SpikeLessApp extends StatelessWidget {
   const SpikeLessApp({super.key});
@@ -30,6 +58,8 @@ class SplashScreen extends StatefulWidget {
       _SplashScreenState();
 }
 
+
+
 class _SplashScreenState
     extends State<SplashScreen> {
 
@@ -50,25 +80,38 @@ class _SplashScreenState
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment:
               MainAxisAlignment.center,
           children: [
-            Icon(Icons.bolt,
-                size: 80,
-                color: Colors.green),
-            SizedBox(height: 20),
-            Text(
-              "SpikeLess",
-              style: TextStyle(
-                  fontSize: 32,
-                  fontWeight:
-                      FontWeight.bold),
-            ),
-          ],
+  Icon(Icons.bolt,
+      size: 80,
+      color: Colors.green),
+  SizedBox(height: 20),
+  Text(
+    "SpikeLess",
+    style: TextStyle(
+      fontSize: 32,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+
+  SizedBox(height: 30),   // add spacing
+
+  ElevatedButton(
+    onPressed: () async {
+      final user = await signInWithGoogle();
+      if (user != null) {
+        print("Logged in: ${user.user?.email}");
+      }
+    },
+    child: const Text("Sign in with Google"),
+  ),
+],
+
         ),
       ),
     );
