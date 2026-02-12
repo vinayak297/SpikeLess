@@ -80,7 +80,6 @@ class _AgeScreenState extends State<AgeScreen> {
 
 class HeightScreen extends StatefulWidget {
   final int age;
-
   const HeightScreen({super.key, required this.age});
 
   @override
@@ -279,6 +278,10 @@ class _GenderScreenState extends State<GenderScreen> {
 /// DASHBOARD SCREEN
 ////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
+/// DASHBOARD SCREEN
+////////////////////////////////////////////////////////////
+
 class DashboardScreen extends StatefulWidget {
   final int age;
   final int height;
@@ -302,6 +305,9 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int xp = 0;
   int streak = 0;
+  int todaySugarCount = 0;
+  List<int> weeklyCounts = List.filled(7, 0);
+
   String insightMessage =
       "Log your first sugar intake today 🌿";
 
@@ -309,6 +315,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     checkStreak();
+    loadTodayCount();
+    loadWeeklyData();
   }
 
   Future<void> checkStreak() async {
@@ -348,10 +356,63 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {});
   }
 
-  void logSugar(String item) {
-    setState(() {
-      xp += 5;
+  Future<void> loadTodayCount() async {
+    final prefs = await SharedPreferences.getInstance();
 
+    String today =
+        DateTime.now().toIso8601String().split("T").first;
+
+    List<String> logs =
+        prefs.getStringList("sugar_logs") ?? [];
+
+    int countToday =
+        logs.where((date) => date == today).length;
+
+    setState(() {
+      todaySugarCount = countToday;
+    });
+  }
+
+  Future<void> loadWeeklyData() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> logs =
+        prefs.getStringList("sugar_logs") ?? [];
+
+    List<int> counts = List.filled(7, 0);
+
+    for (int i = 0; i < 7; i++) {
+      DateTime day =
+          DateTime.now().subtract(Duration(days: i));
+      String dateStr =
+          day.toIso8601String().split("T").first;
+
+      counts[6 - i] =
+          logs.where((d) => d == dateStr).length;
+    }
+
+    setState(() {
+      weeklyCounts = counts;
+    });
+  }
+
+  void logSugar(String item) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    String today =
+        DateTime.now().toIso8601String().split("T").first;
+
+    List<String> logs =
+        prefs.getStringList("sugar_logs") ?? [];
+
+    logs.add(today);
+    await prefs.setStringList("sugar_logs", logs);
+
+    xp += 5;
+
+    await loadTodayCount();
+    await loadWeeklyData();
+
+    setState(() {
       if (widget.bmi > 25) {
         insightMessage =
             "On higher BMI days, sugar spikes may last longer.";
@@ -365,9 +426,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("$item logged! +5 XP"),
-      ),
+      SnackBar(content: Text("$item logged! +5 XP")),
     );
   }
 
@@ -380,54 +439,94 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Widget buildBar(int value) {
+    return Expanded(
+      child: Column(
+        children: [
+          Container(
+            height: value * 10.0,
+            width: 20,
+            color: Colors.green,
+          ),
+          const SizedBox(height: 4),
+          Text(value.toString()),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("SpikeLess")),
       body: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
-          children: [
-            Text("🔥 Streak: $streak days",
-                style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Text("XP: $xp",
-                style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 30),
-            const Text("Quick Log",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                sugarButton("Chai"),
-                const SizedBox(width: 10),
-                sugarButton("Sweets"),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                sugarButton("Cold Drink"),
-                const SizedBox(width: 10),
-                sugarButton("Snack"),
-              ],
-            ),
-            const SizedBox(height: 30),
-            const Text("Insight",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Text(insightMessage),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+            children: [
+              Text("🔥 Streak: $streak days",
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
+              const SizedBox(height: 5),
+              Text("XP: $xp",
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
+              const SizedBox(height: 5),
+              Text("Today: $todaySugarCount logs"),
+              const SizedBox(height: 30),
+
+              const Text("Last 7 Days",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+
+              Row(
+                crossAxisAlignment:
+                    CrossAxisAlignment.end,
+                children: weeklyCounts
+                    .map((count) => buildBar(count))
+                    .toList(),
+              ),
+
+              const SizedBox(height: 30),
+
+              const Text("Quick Log",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+
+              Row(
+                children: [
+                  sugarButton("Chai"),
+                  const SizedBox(width: 10),
+                  sugarButton("Sweets"),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  sugarButton("Cold Drink"),
+                  const SizedBox(width: 10),
+                  sugarButton("Snack"),
+                ],
+              ),
+
+              const SizedBox(height: 30),
+
+              const Text("Insight",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              Text(insightMessage),
+            ],
+          ),
         ),
       ),
     );
