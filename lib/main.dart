@@ -42,8 +42,8 @@ class _AgeScreenState extends State<AgeScreen> {
             const Text("Step 1 of 4"),
             const SizedBox(height: 20),
             const Text("Select your age",
-                style:
-                    TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    fontSize: 26, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Text(age.toInt().toString(),
                 style: const TextStyle(fontSize: 40)),
@@ -61,7 +61,7 @@ class _AgeScreenState extends State<AgeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
+                      builder: (_) =>
                           HeightScreen(age: age.toInt())),
                 );
               },
@@ -100,8 +100,8 @@ class _HeightScreenState extends State<HeightScreen> {
             const Text("Step 2 of 4"),
             const SizedBox(height: 20),
             const Text("Select your height (cm)",
-                style:
-                    TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    fontSize: 26, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Text(height.toInt().toString(),
                 style: const TextStyle(fontSize: 40)),
@@ -119,7 +119,7 @@ class _HeightScreenState extends State<HeightScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => WeightScreen(
+                      builder: (_) => WeightScreen(
                             age: widget.age,
                             height: height.toInt(),
                           )),
@@ -163,8 +163,8 @@ class _WeightScreenState extends State<WeightScreen> {
             const Text("Step 3 of 4"),
             const SizedBox(height: 20),
             const Text("Select your weight (kg)",
-                style:
-                    TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    fontSize: 26, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Text(weight.toInt().toString(),
                 style: const TextStyle(fontSize: 40)),
@@ -180,88 +180,18 @@ class _WeightScreenState extends State<WeightScreen> {
             ElevatedButton(
               onPressed: () {
                 double bmi =
-                    weight / ((widget.height / 100) * (widget.height / 100));
+                    weight / ((widget.height / 100) *
+                        (widget.height / 100));
 
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => GenderScreen(
+                      builder: (_) => DashboardScreen(
                             age: widget.age,
                             height: widget.height,
                             weight: weight.toInt(),
                             bmi: bmi,
-                          )),
-                );
-              },
-              child: const Text("Continue"),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-////////////////////////////////////////////////////////////
-/// GENDER SCREEN
-////////////////////////////////////////////////////////////
-
-class GenderScreen extends StatefulWidget {
-  final int age;
-  final int height;
-  final int weight;
-  final double bmi;
-
-  const GenderScreen(
-      {super.key,
-      required this.age,
-      required this.height,
-      required this.weight,
-      required this.bmi});
-
-  @override
-  State<GenderScreen> createState() => _GenderScreenState();
-}
-
-class _GenderScreenState extends State<GenderScreen> {
-  String gender = "Male";
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const SizedBox(height: 80),
-            const Text("Step 4 of 4"),
-            const SizedBox(height: 20),
-            const Text("Select your gender",
-                style:
-                    TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 40),
-            DropdownButton<String>(
-              value: gender,
-              items: const [
-                DropdownMenuItem(value: "Male", child: Text("Male")),
-                DropdownMenuItem(value: "Female", child: Text("Female")),
-              ],
-              onChanged: (value) {
-                setState(() => gender = value!);
-              },
-            ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => DashboardScreen(
-                            age: widget.age,
-                            height: widget.height,
-                            weight: widget.weight,
-                            bmi: widget.bmi,
-                            gender: gender,
+                            gender: "Male",
                           )),
                 );
               },
@@ -273,10 +203,6 @@ class _GenderScreenState extends State<GenderScreen> {
     );
   }
 }
-
-////////////////////////////////////////////////////////////
-/// DASHBOARD SCREEN
-////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
 /// DASHBOARD SCREEN
@@ -304,72 +230,34 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int xp = 0;
-  int streak = 0;
+  int streak = 1;
   int todaySugarCount = 0;
   List<int> weeklyCounts = List.filled(7, 0);
 
   String insightMessage =
       "Log your first sugar intake today 🌿";
+  String correctiveAction = "";
 
   @override
   void initState() {
     super.initState();
-    checkStreak();
     loadTodayCount();
     loadWeeklyData();
   }
 
-  Future<void> checkStreak() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    String today =
-        DateTime.now().toIso8601String().split("T").first;
-
-    String? savedDate =
-        prefs.getString("last_login_date");
-    int savedStreak =
-        prefs.getInt("streak") ?? 0;
-
-    if (savedDate == null) {
-      streak = 1;
-    } else {
-      DateTime lastDate =
-          DateTime.parse(savedDate);
-      DateTime currentDate =
-          DateTime.parse(today);
-
-      int difference =
-          currentDate.difference(lastDate).inDays;
-
-      if (difference == 1) {
-        streak = savedStreak + 1;
-      } else if (difference == 0) {
-        streak = savedStreak;
-      } else {
-        streak = 1;
-      }
-    }
-
-    await prefs.setString("last_login_date", today);
-    await prefs.setInt("streak", streak);
-
-    setState(() {});
-  }
-
   Future<void> loadTodayCount() async {
     final prefs = await SharedPreferences.getInstance();
-
     String today =
         DateTime.now().toIso8601String().split("T").first;
 
     List<String> logs =
         prefs.getStringList("sugar_logs") ?? [];
 
-    int countToday =
-        logs.where((date) => date == today).length;
+    int count =
+        logs.where((d) => d == today).length;
 
     setState(() {
-      todaySugarCount = countToday;
+      todaySugarCount = count;
     });
   }
 
@@ -407,26 +295,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
     logs.add(today);
     await prefs.setStringList("sugar_logs", logs);
 
-    xp += 5;
+    List<int> rewards = [3, 5, 7, 10];
+    rewards.shuffle();
+    int randomReward = rewards.first;
 
-    await loadTodayCount();
-    await loadWeeklyData();
+    String action;
+
+    if (widget.bmi > 25 && todaySugarCount >= 2) {
+      action = "Take a 10-minute brisk walk now.";
+    } else if (todaySugarCount >= 3) {
+      action = "Drink 2 glasses of water immediately.";
+    } else {
+      action =
+          "Have a protein snack to balance sugar spike.";
+    }
 
     setState(() {
+      xp += randomReward;
+      correctiveAction = action;
+
       if (widget.bmi > 25) {
         insightMessage =
-            "On higher BMI days, sugar spikes may last longer.";
-      } else if (widget.age < 18) {
-        insightMessage =
-            "At younger ages, sugar affects focus.";
+            "Higher BMI may prolong glucose spikes.";
       } else {
         insightMessage =
             "Frequent sugar reduces steady energy.";
       }
     });
 
+    await loadTodayCount();
+    await loadWeeklyData();
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("$item logged! +5 XP")),
+      SnackBar(
+        content:
+            Text("$item logged! +$randomReward XP"),
+      ),
     );
   }
 
@@ -525,6 +429,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               Text(insightMessage),
+
+              const SizedBox(height: 10),
+              if (correctiveAction.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade100,
+                    borderRadius:
+                        BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    "Action: $correctiveAction",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
             ],
           ),
         ),
