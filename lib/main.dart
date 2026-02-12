@@ -13,7 +13,64 @@ class SpikeLessApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AgeScreen(),
+      home: SplashScreen(),
+    );
+  }
+}
+
+////////////////////////////////////////////////////////////
+/// SPLASH SCREEN
+////////////////////////////////////////////////////////////
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() =>
+      _SplashScreenState();
+}
+
+class _SplashScreenState
+    extends State<SplashScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(
+        const Duration(seconds: 2), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (_) =>
+                const AgeScreen()),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+          children: [
+            Icon(Icons.bolt,
+                size: 80,
+                color: Colors.green),
+            SizedBox(height: 20),
+            Text(
+              "SpikeLess",
+              style: TextStyle(
+                  fontSize: 32,
+                  fontWeight:
+                      FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -52,7 +109,8 @@ class _AgeScreenState extends State<AgeScreen> {
               min: 10,
               max: 80,
               value: age,
-              onChanged: (value) => setState(() => age = value),
+              onChanged: (value) =>
+                  setState(() => age = value),
             ),
             const Spacer(),
             ElevatedButton(
@@ -82,7 +140,8 @@ class HeightScreen extends StatefulWidget {
   const HeightScreen({super.key, required this.age});
 
   @override
-  State<HeightScreen> createState() => _HeightScreenState();
+  State<HeightScreen> createState() =>
+      _HeightScreenState();
 }
 
 class _HeightScreenState extends State<HeightScreen> {
@@ -203,7 +262,7 @@ class _WeightScreenState extends State<WeightScreen> {
 }
 
 ////////////////////////////////////////////////////////////
-/// HEALTH PERMISSION SCREEN
+/// HEALTH PERMISSION
 ////////////////////////////////////////////////////////////
 
 class HealthPermissionScreen extends StatelessWidget {
@@ -221,6 +280,11 @@ class HealthPermissionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Random random = Random();
+    int steps = 2000 + random.nextInt(7000);
+    double sleep =
+        4 + random.nextInt(5).toDouble();
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -232,20 +296,12 @@ class HealthPermissionScreen extends StatelessWidget {
               "Allow access to step & sleep data?",
               style: TextStyle(
                   fontSize: 22,
-                  fontWeight: FontWeight.bold),
+                  fontWeight:
+                      FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            const Text(
-                "Used to personalize your metabolic risk insights."),
-            const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
-                Random random = Random();
-                int steps =
-                    2000 + random.nextInt(7000);
-                double sleep =
-                    4 + random.nextInt(5).toDouble();
-
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -481,7 +537,6 @@ class _DashboardScreenState
                 CrossAxisAlignment.start,
             children: [
 
-              /// Risk
               const Text("Risk Score",
                   style: TextStyle(
                       fontSize: 22,
@@ -502,16 +557,12 @@ class _DashboardScreenState
               ),
 
               const SizedBox(height: 10),
-              Text(
-                  "Steps: ${widget.steps}"),
-              Text(
-                  "Sleep: ${widget.sleepHours.toStringAsFixed(1)} hrs"),
-
+              Text("Steps: ${widget.steps}"),
+              Text("Sleep: ${widget.sleepHours.toStringAsFixed(1)} hrs"),
               const SizedBox(height: 10),
-              Text(
-                  "Today: $todaySugarCount logs"),
-              Text(
-                  "Daily Target: $dailyTarget logs"),
+
+              Text("Today: $todaySugarCount logs"),
+              Text("Daily Target: $dailyTarget logs"),
               if (todaySugarCount >
                   dailyTarget)
                 const Text(
@@ -522,7 +573,6 @@ class _DashboardScreenState
 
               const SizedBox(height: 30),
 
-              /// Weekly Chart
               const Text("Last 7 Days",
                   style: TextStyle(
                       fontSize: 22,
@@ -540,7 +590,6 @@ class _DashboardScreenState
 
               const SizedBox(height: 30),
 
-              /// Quick Log
               const Text("Quick Log",
                   style: TextStyle(
                       fontSize: 22,
@@ -561,7 +610,6 @@ class _DashboardScreenState
 
               const SizedBox(height: 30),
 
-              /// Insight
               Text(insightMessage),
               const SizedBox(height: 10),
               if (correctiveAction
