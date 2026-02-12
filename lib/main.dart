@@ -230,9 +230,9 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int xp = 0;
-  int streak = 1;
   int todaySugarCount = 0;
   List<int> weeklyCounts = List.filled(7, 0);
+  int riskScore = 0;
 
   String insightMessage =
       "Log your first sugar intake today 🌿";
@@ -259,6 +259,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       todaySugarCount = count;
     });
+
+    calculateRisk();
   }
 
   Future<void> loadWeeklyData() async {
@@ -280,6 +282,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     setState(() {
       weeklyCounts = counts;
+    });
+
+    calculateRisk();
+  }
+
+  void calculateRisk() {
+    int score = 0;
+
+    if (widget.bmi > 25) {
+      score += 20;
+    }
+
+    if (todaySugarCount == 1) {
+      score += 10;
+    } else if (todaySugarCount == 2) {
+      score += 20;
+    } else if (todaySugarCount >= 3) {
+      score += 30;
+    }
+
+    int weeklyTotal =
+        weeklyCounts.reduce((a, b) => a + b);
+
+    if (weeklyTotal >= 5) {
+      score += 20;
+    }
+
+    if (score > 100) score = 100;
+
+    setState(() {
+      riskScore = score;
     });
   }
 
@@ -359,6 +392,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Color getRiskColor() {
+    if (riskScore < 30) return Colors.green;
+    if (riskScore < 60) return Colors.orange;
+    return Colors.red;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -370,17 +409,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
             crossAxisAlignment:
                 CrossAxisAlignment.start,
             children: [
-              Text("🔥 Streak: $streak days",
-                  style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 5),
               Text("XP: $xp",
                   style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
               Text("Today: $todaySugarCount logs"),
+              const SizedBox(height: 30),
+
+              const Text("Risk Score",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              Text(
+                "$riskScore / 100",
+                style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: getRiskColor()),
+              ),
+
               const SizedBox(height: 30),
 
               const Text("Last 7 Days",
