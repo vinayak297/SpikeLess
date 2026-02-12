@@ -57,55 +57,157 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() =>
       _SplashScreenState();
 }
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
+
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  bool show1 = false;
+  bool show2 = false;
+  bool show3 = false;
+  bool show4 = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      setState(() => show1 = true);
+    });
+
+    Future.delayed(const Duration(milliseconds: 600), () {
+      setState(() => show2 = true);
+    });
+
+    Future.delayed(const Duration(milliseconds: 900), () {
+      setState(() => show3 = true);
+    });
+
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      setState(() => show4 = true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
+            const Center(
+              child: Icon(
+                Icons.bolt,
+                size: 70,
+                color: Colors.green,
+              ),
+            ),
+
+            const SizedBox(height: 40),
+
             const Text(
-              "Welcome to SpikeLess",
+              "Get the full SpikeLess experience",
               style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
               ),
             ),
 
             const SizedBox(height: 30),
 
-            ElevatedButton(
-              onPressed: () async {
-                final user = await signInWithGoogle();
-                if (user != null) {
+            AnimatedOpacity(
+              opacity: show1 ? 1 : 0,
+              duration: const Duration(milliseconds: 500),
+              child: BenefitRow(
+                text: "Sync your data across devices",
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            AnimatedOpacity(
+              opacity: show2 ? 1 : 0,
+              duration: const Duration(milliseconds: 500),
+              child: BenefitRow(
+                text: "Save and track your progress",
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            AnimatedOpacity(
+              opacity: show3 ? 1 : 0,
+              duration: const Duration(milliseconds: 500),
+              child: BenefitRow(
+                text: "Access AI-powered insights",
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            AnimatedOpacity(
+  opacity: show1 ? 1 : 0,
+  duration: const Duration(milliseconds: 500),
+  child: BenefitRow(
+    text: "Sync your data across devices",
+  ),
+),
+
+
+            const SizedBox(height: 50),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () async {
+                  final user = await signInWithGoogle();
+                  if (user != null) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AgeScreen(),
+                      ),
+                    );
+                  }
+                },
+                child: const Text(
+                  "Sign in with Google",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 18),
+
+            Center(
+              child: TextButton(
+                onPressed: () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (_) => const AgeScreen(),
                     ),
                   );
-                }
-              },
-              child: const Text("Sign in with Google"),
-            ),
-
-            const SizedBox(height: 15),
-
-            TextButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const AgeScreen(),
-                  ),
-                );
-              },
-              child: const Text("Continue as Guest"),
+                },
+                child: const Text(
+                  "Continue as Guest",
+                  style: TextStyle(color: Colors.black54),
+                ),
+              ),
             ),
           ],
         ),
@@ -113,6 +215,7 @@ class AuthScreen extends StatelessWidget {
     );
   }
 }
+
 
 
 
@@ -773,6 +876,34 @@ xp += reward;
           ),
         ),
       ),
+    );
+  }
+}
+class BenefitRow extends StatelessWidget {
+  final String text;
+
+  const BenefitRow({super.key, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Icon(
+          Icons.check_circle,
+          size: 18,
+          color: Colors.green,
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 15,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
