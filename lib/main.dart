@@ -57,6 +57,63 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() =>
       _SplashScreenState();
 }
+class AuthScreen extends StatelessWidget {
+  const AuthScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+
+            const Text(
+              "Welcome to SpikeLess",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            ElevatedButton(
+              onPressed: () async {
+                final user = await signInWithGoogle();
+                if (user != null) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AgeScreen(),
+                    ),
+                  );
+                }
+              },
+              child: const Text("Sign in with Google"),
+            ),
+
+            const SizedBox(height: 15),
+
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AgeScreen(),
+                  ),
+                );
+              },
+              child: const Text("Continue as Guest"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 
 
@@ -65,17 +122,15 @@ class _SplashScreenState
 
   @override
   void initState() {
-    super.initState();
+    Future.delayed(const Duration(seconds: 2), () {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const AuthScreen(),
+    ),
+  );
+});
 
-    Future.delayed(
-        const Duration(seconds: 2), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (_) =>
-                const AgeScreen()),
-      );
-    });
   }
 
   @override
@@ -101,15 +156,7 @@ class _SplashScreenState
 
   SizedBox(height: 30),   // add spacing
 
-  ElevatedButton(
-    onPressed: () async {
-      final user = await signInWithGoogle();
-      if (user != null) {
-        print("Logged in: ${user.user?.email}");
-      }
-    },
-    child: const Text("Sign in with Google"),
-  ),
+  
 ],
 
         ),
