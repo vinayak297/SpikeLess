@@ -361,6 +361,47 @@ class _DashboardScreenState
       List.filled(7, 0);
   int riskScore = 0;
   int dailyTarget = 2;
+  Map<String, List<String>> categories = {
+  "🥤 Drinks & Beverages": [
+    "Tea (Chai)",
+    "Coffee (Sugar)",
+    "Cold Drink",
+    "Energy Drink",
+    "Fruit Juice",
+    "Milkshake",
+    "Sweet Lassi",
+    "Iced Tea"
+  ],
+  "🍪 Snack Items": [
+    "Biscuits",
+    "Cookies",
+    "Cake Slice",
+    "Pastry",
+    "Chocolate Bar",
+    "Candy",
+    "Donut",
+    "Ice Cream"
+  ],
+  "🍛 Meals (Hidden Sugar)": [
+    "White Bread",
+    "White Rice",
+    "Noodles",
+    "Burger",
+    "Pizza",
+    "Sandwich",
+    "Fast Food Combo"
+  ],
+  "🧃 Healthy Alternatives": [
+    "Green Tea",
+    "Black Coffee",
+    "Nuts",
+    "Fruit (Whole)",
+    "Boiled Eggs",
+    "Salad",
+    "Unsweetened Yogurt"
+  ],
+};
+
 
   String insightMessage =
       "Log your first sugar intake today 🌿";
@@ -453,12 +494,26 @@ class _DashboardScreenState
     await prefs.setStringList(
         "sugar_logs", logs);
 
-    List<int> rewards =
-        [3, 5, 7, 10];
-    rewards.shuffle();
-    int reward = rewards.first;
+    int reward;
 
-    xp += reward;
+if (item.contains("Green Tea") ||
+    item.contains("Nuts") ||
+    item.contains("Fruit") ||
+    item.contains("Salad") ||
+    item.contains("Unsweetened")) {
+  reward = 15; // Healthy choice bonus
+} else if (item.contains("Cold Drink") ||
+           item.contains("Energy Drink") ||
+           item.contains("Cake") ||
+           item.contains("Donut") ||
+           item.contains("Candy")) {
+  reward = 3; // High sugar item
+} else {
+  reward = 7; // Moderate sugar
+}
+
+xp += reward;
+
 
     await loadData();
 
@@ -596,17 +651,21 @@ class _DashboardScreenState
                       fontWeight:
                           FontWeight.bold)),
               const SizedBox(height: 20),
-              Row(children: [
-                sugarButton("Chai"),
-                const SizedBox(width: 10),
-                sugarButton("Sweets"),
-              ]),
-              const SizedBox(height: 10),
-              Row(children: [
-                sugarButton("Cold Drink"),
-                const SizedBox(width: 10),
-                sugarButton("Snack"),
-              ]),
+              ...categories.entries.map((entry) {
+  return ExpansionTile(
+    title: Text(
+      entry.key,
+      style: const TextStyle(fontWeight: FontWeight.bold),
+    ),
+    children: entry.value.map((item) {
+      return ListTile(
+        title: Text(item),
+        onTap: () => logSugar(item),
+      );
+    }).toList(),
+  );
+}).toList(),
+
 
               const SizedBox(height: 30),
 
