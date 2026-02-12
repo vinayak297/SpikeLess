@@ -44,30 +44,22 @@ class _AgeScreenState extends State<AgeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 60),
-            const Text(
-              "Step 1 of 4",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
+            const Text("Step 1 of 4",
+                style: TextStyle(fontSize: 14, color: Colors.grey)),
             const SizedBox(height: 20),
-            const Text(
-              "How old are you?",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            const Text("How old are you?",
+                style:
+                    TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Center(
               child: Text(
                 age.toInt().toString(),
                 style: const TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2A9D8F),
-                ),
+                    fontSize: 48,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2A9D8F)),
               ),
             ),
-            const SizedBox(height: 20),
             Slider(
               value: age,
               min: 10,
@@ -75,9 +67,7 @@ class _AgeScreenState extends State<AgeScreen> {
               divisions: 50,
               activeColor: const Color(0xFF4CAF93),
               onChanged: (value) {
-                setState(() {
-                  age = value;
-                });
+                setState(() => age = value);
               },
             ),
             const Spacer(),
@@ -85,22 +75,19 @@ class _AgeScreenState extends State<AgeScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4CAF93),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
+                    backgroundColor: const Color(0xFF4CAF93),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 16)),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          HeightScreen(age: age.toInt()),
-                    ),
+                        builder: (_) =>
+                            HeightScreen(age: age.toInt())),
                   );
                 },
-                child: const Text(
-                  "Continue",
-                  style: TextStyle(fontSize: 18),
-                ),
+                child: const Text("Continue",
+                    style: TextStyle(fontSize: 18)),
               ),
             ),
             const SizedBox(height: 40),
@@ -117,7 +104,6 @@ class _AgeScreenState extends State<AgeScreen> {
 
 class HeightScreen extends StatefulWidget {
   final int age;
-
   const HeightScreen({super.key, required this.age});
 
   @override
@@ -136,30 +122,22 @@ class _HeightScreenState extends State<HeightScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 60),
-            const Text(
-              "Step 2 of 4",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
+            const Text("Step 2 of 4",
+                style: TextStyle(fontSize: 14, color: Colors.grey)),
             const SizedBox(height: 20),
-            const Text(
-              "Your height (cm)?",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            const Text("Your height (cm)?",
+                style:
+                    TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Center(
               child: Text(
                 "${height.toInt()} cm",
                 style: const TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2A9D8F),
-                ),
+                    fontSize: 48,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2A9D8F)),
               ),
             ),
-            const SizedBox(height: 20),
             Slider(
               value: height,
               min: 120,
@@ -167,9 +145,7 @@ class _HeightScreenState extends State<HeightScreen> {
               divisions: 100,
               activeColor: const Color(0xFF4CAF93),
               onChanged: (value) {
-                setState(() {
-                  height = value;
-                });
+                setState(() => height = value);
               },
             ),
             const Spacer(),
@@ -177,24 +153,21 @@ class _HeightScreenState extends State<HeightScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4CAF93),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
+                    backgroundColor: const Color(0xFF4CAF93),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 16)),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => WeightScreen(
-                        age: widget.age,
-                        height: height.toInt(),
-                      ),
-                    ),
+                        builder: (_) => WeightScreen(
+                              age: widget.age,
+                              height: height.toInt(),
+                            )),
                   );
                 },
-                child: const Text(
-                  "Continue",
-                  style: TextStyle(fontSize: 18),
-                ),
+                child: const Text("Continue",
+                    style: TextStyle(fontSize: 18)),
               ),
             ),
             const SizedBox(height: 40),
@@ -213,11 +186,8 @@ class WeightScreen extends StatefulWidget {
   final int age;
   final int height;
 
-  const WeightScreen({
-    super.key,
-    required this.age,
-    required this.height,
-  });
+  const WeightScreen(
+      {super.key, required this.age, required this.height});
 
   @override
   State<WeightScreen> createState() => _WeightScreenState();
@@ -235,30 +205,22 @@ class _WeightScreenState extends State<WeightScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 60),
-            const Text(
-              "Step 3 of 4",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
+            const Text("Step 3 of 4",
+                style: TextStyle(fontSize: 14, color: Colors.grey)),
             const SizedBox(height: 20),
-            const Text(
-              "Your weight (kg)?",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            const Text("Your weight (kg)?",
+                style:
+                    TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Center(
               child: Text(
                 "${weight.toInt()} kg",
                 style: const TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2A9D8F),
-                ),
+                    fontSize: 48,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2A9D8F)),
               ),
             ),
-            const SizedBox(height: 20),
             Slider(
               value: weight,
               min: 30,
@@ -266,9 +228,7 @@ class _WeightScreenState extends State<WeightScreen> {
               divisions: 120,
               activeColor: const Color(0xFF4CAF93),
               onChanged: (value) {
-                setState(() {
-                  weight = value;
-                });
+                setState(() => weight = value);
               },
             ),
             const Spacer(),
@@ -276,24 +236,273 @@ class _WeightScreenState extends State<WeightScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4CAF93),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
+                    backgroundColor: const Color(0xFF4CAF93),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 16)),
                 onPressed: () {
-                  double heightInMeters = widget.height / 100;
+                  double heightMeters = widget.height / 100;
                   double bmi =
-                      weight / (heightInMeters * heightInMeters);
+                      weight / (heightMeters * heightMeters);
 
-                  print(
-                      "Age: ${widget.age}, Height: ${widget.height}, Weight: ${weight.toInt()}, BMI: ${bmi.toStringAsFixed(1)}");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => GenderScreen(
+                              age: widget.age,
+                              height: widget.height,
+                              weight: weight.toInt(),
+                              bmi: bmi,
+                            )),
+                  );
                 },
-                child: const Text(
-                  "Continue",
-                  style: TextStyle(fontSize: 18),
-                ),
+                child: const Text("Continue",
+                    style: TextStyle(fontSize: 18)),
               ),
             ),
             const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+////////////////////////////////////////////////////////////
+/// GENDER SCREEN
+////////////////////////////////////////////////////////////
+
+class GenderScreen extends StatefulWidget {
+  final int age;
+  final int height;
+  final int weight;
+  final double bmi;
+
+  const GenderScreen(
+      {super.key,
+      required this.age,
+      required this.height,
+      required this.weight,
+      required this.bmi});
+
+  @override
+  State<GenderScreen> createState() => _GenderScreenState();
+}
+
+class _GenderScreenState extends State<GenderScreen> {
+  String? selectedGender;
+
+  Widget genderButton(String gender) {
+    bool isSelected = selectedGender == gender;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() => selectedGender = gender);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          margin: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? const Color(0xFF4CAF93)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFF4CAF93)),
+          ),
+          child: Center(
+            child: Text(
+              gender,
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isSelected
+                      ? Colors.white
+                      : const Color(0xFF4CAF93)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 60),
+            const Text("Step 4 of 4",
+                style: TextStyle(fontSize: 14, color: Colors.grey)),
+            const SizedBox(height: 20),
+            const Text("Select your gender",
+                style:
+                    TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 40),
+            Row(
+              children: [
+                genderButton("Male"),
+                genderButton("Female"),
+              ],
+            ),
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4CAF93),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 16)),
+                onPressed: selectedGender == null
+                    ? null
+                    : () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => DashboardScreen(
+                                    age: widget.age,
+                                    height: widget.height,
+                                    weight: widget.weight,
+                                    bmi: widget.bmi,
+                                    gender: selectedGender!,
+                                  )),
+                        );
+                      },
+                child: const Text("Finish",
+                    style: TextStyle(fontSize: 18)),
+              ),
+            ),
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+////////////////////////////////////////////////////////////
+/// DASHBOARD SCREEN
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+/// DASHBOARD SCREEN
+////////////////////////////////////////////////////////////
+
+class DashboardScreen extends StatefulWidget {
+  final int age;
+  final int height;
+  final int weight;
+  final double bmi;
+  final String gender;
+
+  const DashboardScreen({
+    super.key,
+    required this.age,
+    required this.height,
+    required this.weight,
+    required this.bmi,
+    required this.gender,
+  });
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  int xp = 0;
+  String insightMessage = "Log your first sugar intake today 🌿";
+
+  void logSugar(String item) {
+    setState(() {
+      xp += 5;
+
+      // Simple rule-based insight
+      if (widget.bmi > 25) {
+        insightMessage =
+            "On higher BMI days, sugar spikes may last longer.";
+      } else if (widget.age < 18) {
+        insightMessage =
+            "At younger ages, sugar can affect focus and mood.";
+      } else {
+        insightMessage =
+            "Frequent sugar may reduce steady energy levels.";
+      }
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("$item logged! +5 XP"),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  Widget sugarButton(String label) {
+    return Expanded(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF4CAF93),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+        onPressed: () => logSugar(label),
+        child: Text(label),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("SpikeLess 🌿"),
+        backgroundColor: const Color(0xFF4CAF93),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+            Text("XP: $xp",
+                style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            const Text(
+              "Quick Log",
+              style: TextStyle(
+                  fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+
+            Row(
+              children: [
+                sugarButton("Chai"),
+                const SizedBox(width: 10),
+                sugarButton("Sweets"),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                sugarButton("Cold Drink"),
+                const SizedBox(width: 10),
+                sugarButton("Snack"),
+              ],
+            ),
+
+            const SizedBox(height: 40),
+            const Text(
+              "Insight",
+              style: TextStyle(
+                  fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              insightMessage,
+              style: const TextStyle(fontSize: 16),
+            ),
           ],
         ),
       ),
