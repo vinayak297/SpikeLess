@@ -43,7 +43,8 @@ class _AgeScreenState extends State<AgeScreen> {
             const Text("Step 1 of 4"),
             const SizedBox(height: 20),
             const Text("Select your age",
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                style:
+                    TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Text(age.toInt().toString(),
                 style: const TextStyle(fontSize: 40)),
@@ -59,7 +60,8 @@ class _AgeScreenState extends State<AgeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => HeightScreen(age: age.toInt())),
+                      builder: (_) =>
+                          HeightScreen(age: age.toInt())),
                 );
               },
               child: const Text("Continue"),
@@ -97,7 +99,8 @@ class _HeightScreenState extends State<HeightScreen> {
             const Text("Step 2 of 4"),
             const SizedBox(height: 20),
             const Text("Select your height (cm)",
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                style:
+                    TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Text(height.toInt().toString(),
                 style: const TextStyle(fontSize: 40)),
@@ -105,7 +108,8 @@ class _HeightScreenState extends State<HeightScreen> {
               min: 100,
               max: 220,
               value: height,
-              onChanged: (value) => setState(() => height = value),
+              onChanged: (value) =>
+                  setState(() => height = value),
             ),
             const Spacer(),
             ElevatedButton(
@@ -140,7 +144,8 @@ class WeightScreen extends StatefulWidget {
       {super.key, required this.age, required this.height});
 
   @override
-  State<WeightScreen> createState() => _WeightScreenState();
+  State<WeightScreen> createState() =>
+      _WeightScreenState();
 }
 
 class _WeightScreenState extends State<WeightScreen> {
@@ -157,7 +162,8 @@ class _WeightScreenState extends State<WeightScreen> {
             const Text("Step 3 of 4"),
             const SizedBox(height: 20),
             const Text("Select your weight (kg)",
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                style:
+                    TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Text(weight.toInt().toString(),
                 style: const TextStyle(fontSize: 40)),
@@ -165,18 +171,21 @@ class _WeightScreenState extends State<WeightScreen> {
               min: 30,
               max: 150,
               value: weight,
-              onChanged: (value) => setState(() => weight = value),
+              onChanged: (value) =>
+                  setState(() => weight = value),
             ),
             const Spacer(),
             ElevatedButton(
               onPressed: () {
-                double bmi =
-                    weight / ((widget.height / 100) * (widget.height / 100));
+                double bmi = weight /
+                    ((widget.height / 100) *
+                        (widget.height / 100));
 
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => HealthPermissionScreen(
+                      builder: (_) =>
+                          HealthPermissionScreen(
                             age: widget.age,
                             height: widget.height,
                             weight: weight.toInt(),
@@ -216,37 +225,43 @@ class HealthPermissionScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment:
+              MainAxisAlignment.center,
           children: [
-            const Text("Allow access to step & sleep data?",
-                style: TextStyle(
-                    fontSize: 22, fontWeight: FontWeight.bold)),
+            const Text(
+              "Allow access to step & sleep data?",
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 20),
             const Text(
-                "SpikeLess uses passive activity data to personalize risk insights."),
+                "Used to personalize your metabolic risk insights."),
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
                 Random random = Random();
-                int steps = 2000 + random.nextInt(7000);
+                int steps =
+                    2000 + random.nextInt(7000);
                 double sleep =
                     4 + random.nextInt(5).toDouble();
 
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => DashboardScreen(
+                      builder: (_) =>
+                          DashboardScreen(
                             age: age,
                             height: height,
                             weight: weight,
                             bmi: bmi,
-                            gender: "Male",
                             steps: steps,
                             sleepHours: sleep,
                           )),
                 );
               },
-              child: const Text("Allow & Continue"),
+              child:
+                  const Text("Allow & Continue"),
             )
           ],
         ),
@@ -256,7 +271,7 @@ class HealthPermissionScreen extends StatelessWidget {
 }
 
 ////////////////////////////////////////////////////////////
-/// DASHBOARD SCREEN
+/// DASHBOARD
 ////////////////////////////////////////////////////////////
 
 class DashboardScreen extends StatefulWidget {
@@ -264,7 +279,6 @@ class DashboardScreen extends StatefulWidget {
   final int height;
   final int weight;
   final double bmi;
-  final String gender;
   final int steps;
   final double sleepHours;
 
@@ -274,7 +288,6 @@ class DashboardScreen extends StatefulWidget {
       required this.height,
       required this.weight,
       required this.bmi,
-      required this.gender,
       required this.steps,
       required this.sleepHours});
 
@@ -283,12 +296,15 @@ class DashboardScreen extends StatefulWidget {
       _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen>
+class _DashboardScreenState
+    extends State<DashboardScreen>
     with SingleTickerProviderStateMixin {
   int xp = 0;
   int todaySugarCount = 0;
-  List<int> weeklyCounts = List.filled(7, 0);
+  List<int> weeklyCounts =
+      List.filled(7, 0);
   int riskScore = 0;
+  int dailyTarget = 2;
 
   String insightMessage =
       "Log your first sugar intake today 🌿";
@@ -299,63 +315,33 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   void initState() {
     super.initState();
-    loadTodayCount();
-    loadWeeklyData();
+    loadData();
 
     _controller = AnimationController(
         vsync: this,
-        duration: const Duration(milliseconds: 300),
+        duration:
+            const Duration(milliseconds: 400),
         lowerBound: 0.9,
         upperBound: 1.1)
       ..repeat(reverse: true);
   }
 
-  void calculateRisk() {
-    int score = 0;
-
-    if (widget.bmi > 25) score += 20;
-
-    if (todaySugarCount == 1)
-      score += 10;
-    else if (todaySugarCount == 2)
-      score += 20;
-    else if (todaySugarCount >= 3) score += 30;
-
-    int weeklyTotal =
-        weeklyCounts.reduce((a, b) => a + b);
-    if (weeklyTotal >= 5) score += 20;
-
-    if (widget.steps < 4000) score += 15;
-    if (widget.sleepHours < 6) score += 15;
-
-    if (score > 100) score = 100;
-
-    setState(() => riskScore = score);
-  }
-
-  Future<void> loadTodayCount() async {
-    final prefs = await SharedPreferences.getInstance();
-    String today =
-        DateTime.now().toIso8601String().split("T").first;
-
+  Future<void> loadData() async {
+    final prefs =
+        await SharedPreferences.getInstance();
     List<String> logs =
         prefs.getStringList("sugar_logs") ?? [];
+
+    String today =
+        DateTime.now().toIso8601String().split("T").first;
 
     todaySugarCount =
         logs.where((d) => d == today).length;
 
-    calculateRisk();
-    setState(() {});
-  }
-
-  Future<void> loadWeeklyData() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> logs =
-        prefs.getStringList("sugar_logs") ?? [];
-
     for (int i = 0; i < 7; i++) {
       DateTime day =
-          DateTime.now().subtract(Duration(days: i));
+          DateTime.now().subtract(
+              Duration(days: i));
       String dateStr =
           day.toIso8601String().split("T").first;
 
@@ -367,112 +353,227 @@ class _DashboardScreenState extends State<DashboardScreen>
     setState(() {});
   }
 
+  void calculateRisk() {
+    int score = 0;
+
+    if (widget.bmi > 25) score += 20;
+
+    if (todaySugarCount == 1)
+      score += 10;
+    else if (todaySugarCount == 2)
+      score += 20;
+    else if (todaySugarCount >= 3)
+      score += 30;
+
+    if (todaySugarCount >
+        dailyTarget) score += 15;
+
+    int weeklyTotal =
+        weeklyCounts.reduce(
+            (a, b) => a + b);
+    if (weeklyTotal >= 5)
+      score += 20;
+
+    if (widget.steps < 4000)
+      score += 15;
+
+    if (widget.sleepHours < 6)
+      score += 15;
+
+    if (score > 100) score = 100;
+
+    riskScore = score;
+  }
+
   void logSugar(String item) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs =
+        await SharedPreferences.getInstance();
     String today =
         DateTime.now().toIso8601String().split("T").first;
 
     List<String> logs =
         prefs.getStringList("sugar_logs") ?? [];
-
     logs.add(today);
-    await prefs.setStringList("sugar_logs", logs);
+    await prefs.setStringList(
+        "sugar_logs", logs);
 
-    List<int> rewards = [3, 5, 7, 10];
+    List<int> rewards =
+        [3, 5, 7, 10];
     rewards.shuffle();
-    int randomReward = rewards.first;
+    int reward = rewards.first;
 
-    xp += randomReward;
+    xp += reward;
+
+    await loadData();
+
+    if (riskScore >= 70) {
+      insightMessage =
+          "High metabolic strain detected.";
+    } else if (riskScore >= 40) {
+      insightMessage =
+          "Moderate glucose exposure.";
+    } else {
+      insightMessage =
+          "Low immediate metabolic risk.";
+    }
 
     correctiveAction =
         widget.steps < 4000
-            ? "Take a short walk to offset sugar."
-            : "Drink water and balance with protein.";
+            ? "Take a short walk."
+            : "Hydrate & balance with protein.";
 
-    insightMessage =
-        riskScore > 60
-            ? "High risk of glucose spike today."
-            : "Moderate sugar exposure.";
+    setState(() {});
 
-    await loadTodayCount();
-    await loadWeeklyData();
-
-    ScaffoldMessenger.of(context).showSnackBar(
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
       SnackBar(
-          content:
-              Text("$item logged! +$randomReward XP")),
+          content: Text(
+              "$item logged! +$reward XP")),
+    );
+  }
+
+  Color getRiskColor() {
+    if (riskScore < 30)
+      return Colors.green;
+    if (riskScore < 60)
+      return Colors.orange;
+    return Colors.red;
+  }
+
+  Widget buildBar(int value) {
+    return Expanded(
+      child: Column(
+        children: [
+          Container(
+            height: value * 10.0,
+            width: 18,
+            color: Colors.green,
+          ),
+          const SizedBox(height: 4),
+          Text(value.toString()),
+        ],
+      ),
     );
   }
 
   Widget sugarButton(String label) {
     return Expanded(
       child: ElevatedButton(
-        onPressed: () => logSugar(label),
+        onPressed: () =>
+            logSugar(label),
         child: Text(label),
       ),
     );
   }
 
-  Color getRiskColor() {
-    if (riskScore < 30) return Colors.green;
-    if (riskScore < 60) return Colors.orange;
-    return Colors.red;
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+      BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("SpikeLess")),
+      appBar:
+          AppBar(title: const Text("SpikeLess")),
       body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
-          children: [
-            const Text("Risk Score",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            ScaleTransition(
-              scale: _controller,
-              child: Text(
-                "$riskScore / 100",
-                style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: getRiskColor()),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text("Steps: ${widget.steps}"),
-            Text("Sleep: ${widget.sleepHours} hrs"),
-            const SizedBox(height: 20),
+        padding:
+            const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+            children: [
 
-            Row(
-              children: [
+              /// Risk
+              const Text("Risk Score",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight:
+                          FontWeight.bold)),
+              const SizedBox(height: 10),
+              ScaleTransition(
+                scale: _controller,
+                child: Text(
+                  "$riskScore / 100",
+                  style: TextStyle(
+                      fontSize: 28,
+                      fontWeight:
+                          FontWeight.bold,
+                      color:
+                          getRiskColor()),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+              Text(
+                  "Steps: ${widget.steps}"),
+              Text(
+                  "Sleep: ${widget.sleepHours.toStringAsFixed(1)} hrs"),
+
+              const SizedBox(height: 10),
+              Text(
+                  "Today: $todaySugarCount logs"),
+              Text(
+                  "Daily Target: $dailyTarget logs"),
+              if (todaySugarCount >
+                  dailyTarget)
+                const Text(
+                  "⚠ You exceeded your daily target.",
+                  style: TextStyle(
+                      color: Colors.red),
+                ),
+
+              const SizedBox(height: 30),
+
+              /// Weekly Chart
+              const Text("Last 7 Days",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight:
+                          FontWeight.bold)),
+              const SizedBox(height: 20),
+              Row(
+                crossAxisAlignment:
+                    CrossAxisAlignment.end,
+                children: weeklyCounts
+                    .map((count) =>
+                        buildBar(count))
+                    .toList(),
+              ),
+
+              const SizedBox(height: 30),
+
+              /// Quick Log
+              const Text("Quick Log",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight:
+                          FontWeight.bold)),
+              const SizedBox(height: 20),
+              Row(children: [
                 sugarButton("Chai"),
                 const SizedBox(width: 10),
                 sugarButton("Sweets"),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
+              ]),
+              const SizedBox(height: 10),
+              Row(children: [
                 sugarButton("Cold Drink"),
                 const SizedBox(width: 10),
                 sugarButton("Snack"),
-              ],
-            ),
+              ]),
 
-            const SizedBox(height: 30),
-            Text(insightMessage),
-            const SizedBox(height: 10),
-            if (correctiveAction.isNotEmpty)
-              Text("Action: $correctiveAction",
+              const SizedBox(height: 30),
+
+              /// Insight
+              Text(insightMessage),
+              const SizedBox(height: 10),
+              if (correctiveAction
+                  .isNotEmpty)
+                Text(
+                  "Action: $correctiveAction",
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold)),
-          ],
+                      fontWeight:
+                          FontWeight.bold),
+                ),
+            ],
+          ),
         ),
       ),
     );
