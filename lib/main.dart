@@ -4,6 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:health/health.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 Future<UserCredential?> signInWithGoogle() async {
   final GoogleSignInAccount? googleUser =
@@ -392,12 +395,10 @@ class WeightScreen extends StatefulWidget {
   final int age;
   final int height;
 
-  const WeightScreen(
-      {super.key, required this.age, required this.height});
+  const WeightScreen({super.key, required this.age, required this.height});
 
   @override
-  State<WeightScreen> createState() =>
-      _WeightScreenState();
+  State<WeightScreen> createState() => _WeightScreenState();
 }
 
 class _WeightScreenState extends State<WeightScreen> {
@@ -413,40 +414,124 @@ class _WeightScreenState extends State<WeightScreen> {
             const SizedBox(height: 80),
             const Text("Step 3 of 4"),
             const SizedBox(height: 20),
-            const Text("Select your weight (kg)",
-                style:
-                    TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+            const Text(
+              "Select your weight (kg)",
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 40),
-            Text(weight.toInt().toString(),
-                style: const TextStyle(fontSize: 40)),
+            Text(weight.toInt().toString(), style: const TextStyle(fontSize: 40)),
             Slider(
               min: 30,
               max: 150,
               value: weight,
-              onChanged: (value) =>
-                  setState(() => weight = value),
+              onChanged: (value) => setState(() => weight = value),
             ),
             const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                double bmi = weight /
-                    ((widget.height / 100) *
-                        (widget.height / 100));
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                onPressed: () {
+                  // 1. Calculate BMI
+                  // Formula: weight / (height_in_meters)^2
+                  double heightInMeters = widget.height / 100;
+                  double bmi = weight / (heightInMeters * heightInMeters);
 
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) =>
-                          HealthPermissionScreen(
-                            age: widget.age,
-                            height: widget.height,
-                            weight: weight.toInt(),
-                            bmi: bmi,
-                          )),
-                );
-              },
-              child: const Text("Finish"),
-            )
+                  // 2. Navigate to Permission Screen
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => HealthPermissionScreen(
+                        age: widget.age,
+                        height: widget.height,
+                        weight: weight.toInt(),
+                        bmi: bmi,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "Finish",
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+//////GENDER PERMISSION////
+class GenderScreen extends StatefulWidget {
+  final int age;
+  final int height;
+
+  const GenderScreen({super.key, required this.age, required this.height});
+
+  @override
+  State<GenderScreen> createState() => _GenderScreenState();
+}
+
+class _GenderScreenState extends State<GenderScreen> {
+  String selectedGender = "Male";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            const SizedBox(height: 80),
+            const Text("Step 2 of 4"),
+            const SizedBox(height: 20),
+            const Text("Select Gender", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _genderTile("Male", Icons.male, Colors.blue),
+                const SizedBox(width: 20),
+                _genderTile("Female", Icons.female, Colors.pink),
+              ],
+            ),
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (_) => WeightScreen(age: widget.age, height: widget.height))
+                ),
+                child: const Text("Next"),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _genderTile(String gender, IconData icon, Color color) {
+    bool isSelected = selectedGender == gender;
+    return GestureDetector(
+      onTap: () => setState(() => selectedGender = gender),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isSelected ? color.withOpacity(0.1) : Colors.grey[100],
+          border: Border.all(color: isSelected ? color : Colors.transparent, width: 2),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, size: 50, color: isSelected ? color : Colors.grey),
+            Text(gender, style: TextStyle(color: isSelected ? color : Colors.black)),
           ],
         ),
       ),
@@ -457,61 +542,106 @@ class _WeightScreenState extends State<WeightScreen> {
 ////////////////////////////////////////////////////////////
 /// HEALTH PERMISSION
 ////////////////////////////////////////////////////////////
-
 class HealthPermissionScreen extends StatelessWidget {
   final int age;
   final int height;
   final int weight;
   final double bmi;
 
-  const HealthPermissionScreen(
-      {super.key,
-      required this.age,
-      required this.height,
-      required this.weight,
-      required this.bmi});
+  const HealthPermissionScreen({
+    super.key,
+    required this.age,
+    required this.height,
+    required this.weight,
+    required this.bmi,
+  });
 
   @override
   Widget build(BuildContext context) {
-    Random random = Random();
-    int steps = 2000 + random.nextInt(7000);
-    double sleep =
-        4 + random.nextInt(5).toDouble();
-
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Icon(Icons.health_and_safety, size: 80, color: Colors.green),
+            const SizedBox(height: 30),
             const Text(
-              "Allow access to step & sleep data?",
-              style: TextStyle(
-                  fontSize: 22,
-                  fontWeight:
-                      FontWeight.bold),
+              "Sync Health Data",
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) =>
-                          DashboardScreen(
+            const SizedBox(height: 16),
+            const Text(
+              "SpikeLess uses your step and sleep data to calculate your metabolic risk score more accurately.",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+            const SizedBox(height: 40),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () async {
+                  // 1. Request Activity Recognition
+                  var activityPermission = await Permission.activityRecognition.request();
+                  if (!activityPermission.isGranted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Activity permission is required for steps.")),
+                    );
+                    return;
+                  }
+
+                  final health = Health();
+
+                  // 2. Handle Health Connect Status (FIXED NULL SAFETY)
+                  var status = await health.getHealthConnectSdkStatus();
+                  
+                  // If status is null or not available, prompt install
+                  if (status == null || status != HealthConnectSdkStatus.sdkAvailable) {
+                    await health.installHealthConnect();
+                    return;
+                  }
+
+                  // 3. Request Authorization
+                  final types = [
+                    HealthDataType.STEPS,
+                    HealthDataType.SLEEP_ASLEEP,
+                  ];
+
+                  try {
+                    bool granted = await health.requestAuthorization(types);
+                    if (granted) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DashboardScreen(
                             age: age,
                             height: height,
                             weight: weight,
                             bmi: bmi,
-                            steps: steps,
-                            sleepHours: sleep,
-                          )),
-                );
-              },
-              child:
-                  const Text("Allow & Continue"),
-            )
+                          ),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Health access was denied.")),
+                      );
+                    }
+                  } catch (e) {
+                    debugPrint("Health Auth Error: $e");
+                  }
+                },
+                child: const Text(
+                  "Allow & Continue",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -528,17 +658,13 @@ class DashboardScreen extends StatefulWidget {
   final int height;
   final int weight;
   final double bmi;
-  final int steps;
-  final double sleepHours;
 
   const DashboardScreen(
       {super.key,
       required this.age,
       required this.height,
       required this.weight,
-      required this.bmi,
-      required this.steps,
-      required this.sleepHours});
+      required this.bmi,});
 
   @override
   State<DashboardScreen> createState() =>
@@ -548,6 +674,13 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState
     extends State<DashboardScreen>
     with SingleTickerProviderStateMixin {
+
+  final Health health = Health();
+
+  int todaySteps = 0;
+  double sleepHours = 0;
+
+
   int xp = 0;
   int todaySugarCount = 0;
   List<int> weeklyCounts =
@@ -555,6 +688,7 @@ class _DashboardScreenState
   int riskScore = 0;
   int dailyTarget = 2;
   Map<String, List<String>> categories = {
+    
   "🥤 Drinks & Beverages": [
     "Tea (Chai)",
     "Coffee (Sugar)",
@@ -594,26 +728,99 @@ class _DashboardScreenState
     "Unsweetened Yogurt"
   ],
 };
+@override
+void dispose() {
+  _controller?.dispose();
+  super.dispose();
+}
+Future<void> loadHealthData() async {
+  int steps = await fetchTodaySteps();
+  double sleep = await fetchSleepHours();
+
+  setState(() {
+    todaySteps = steps;
+    sleepHours = sleep;
+  });
+}
+
+Future<int> fetchTodaySteps() async {
+  final types = [HealthDataType.STEPS];
+
+  bool requested = await health.requestAuthorization(types);
+  if (!requested) return 0;
+
+  DateTime now = DateTime.now();
+  DateTime start = DateTime(now.year, now.month, now.day);
+
+  List<HealthDataPoint> healthData =
+      await health.getHealthDataFromTypes(
+    types: types,
+    startTime: start,
+    endTime: now,
+  );
+
+  int steps = healthData.fold(
+      0,
+      (sum, item) =>
+          sum + (item.value as NumericHealthValue).numericValue.toInt());
+
+  return steps;
+}
+
+
+
+
+
+
+ 
+Future<double> fetchSleepHours() async {
+  final types = [HealthDataType.SLEEP_ASLEEP];
+
+  bool requested = await health.requestAuthorization(types);
+  if (!requested) return 0;
+
+  DateTime now = DateTime.now();
+  DateTime start = now.subtract(const Duration(days: 1));
+
+  List<HealthDataPoint> sleepData =
+      await health.getHealthDataFromTypes(
+  types: types,
+  startTime: start,
+  endTime: now,
+);
+
+
+  double hours = sleepData.fold(
+      0,
+      (sum, item) =>
+          sum + (item.value as NumericHealthValue)
+              .numericValue);
+
+  return hours;
+}
+
 
 
   String insightMessage =
       "Log your first sugar intake today 🌿";
   String correctiveAction = "";
 
-  late AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
     super.initState();
-    loadData();
+    loadHealthData();
 
     _controller = AnimationController(
-        vsync: this,
-        duration:
-            const Duration(milliseconds: 400),
-        lowerBound: 0.9,
-        upperBound: 1.1)
-      ..repeat(reverse: true);
+  vsync: this,
+  duration: const Duration(milliseconds: 400),
+  lowerBound: 0.9,
+  upperBound: 1.1,
+);
+
+_controller!.repeat(reverse: true);
+
   }
 
   Future<void> loadData() async {
@@ -664,10 +871,10 @@ class _DashboardScreenState
     if (weeklyTotal >= 5)
       score += 20;
 
-    if (widget.steps < 4000)
+    if (todaySteps < 4000)
       score += 15;
 
-    if (widget.sleepHours < 6)
+    if (sleepHours < 6)
       score += 15;
 
     if (score > 100) score = 100;
@@ -722,7 +929,7 @@ xp += reward;
     }
 
     correctiveAction =
-        widget.steps < 4000
+        todaySteps < 4000
             ? "Take a short walk."
             : "Hydrate & balance with protein.";
 
@@ -791,8 +998,11 @@ xp += reward;
                       fontWeight:
                           FontWeight.bold)),
               const SizedBox(height: 10),
-              ScaleTransition(
-                scale: _controller,
+              _controller == null
+  ? const SizedBox()
+  : ScaleTransition(
+      scale: _controller!,
+
                 child: Text(
                   "$riskScore / 100",
                   style: TextStyle(
@@ -805,8 +1015,9 @@ xp += reward;
               ),
 
               const SizedBox(height: 10),
-              Text("Steps: ${widget.steps}"),
-              Text("Sleep: ${widget.sleepHours.toStringAsFixed(1)} hrs"),
+              Text("Steps: $todaySteps"),
+              Text("Sleep: ${sleepHours.toStringAsFixed(1)} hrs"),
+
               const SizedBox(height: 10),
 
               Text("Today: $todaySugarCount logs"),
