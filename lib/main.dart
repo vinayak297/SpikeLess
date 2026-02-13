@@ -368,16 +368,18 @@ class _HeightScreenState extends State<HeightScreen> {
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => WeightScreen(
-                            age: widget.age,
-                            height: height.toInt(),
-                          )),
-                );
-              },
+              // Inside HeightScreen onPressed
+onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => GenderScreen(
+        age: widget.age,         // Added name label
+        height: height.toInt(),  // Added name label
+      ),
+    ),
+  );
+},
               child: const Text("Continue"),
             )
           ],
@@ -435,24 +437,23 @@ class _WeightScreenState extends State<WeightScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 onPressed: () {
-                  // 1. Calculate BMI
-                  // Formula: weight / (height_in_meters)^2
-                  double heightInMeters = widget.height / 100;
-                  double bmi = weight / (heightInMeters * heightInMeters);
+  // 1. Calculate BMI
+  double heightInMeters = widget.height / 100;
+  double bmi = weight / (heightInMeters * heightInMeters);
 
-                  // 2. Navigate to Permission Screen
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => HealthPermissionScreen(
-                        age: widget.age,
-                        height: widget.height,
-                        weight: weight.toInt(),
-                        bmi: bmi,
-                      ),
-                    ),
-                  );
-                },
+  // 2. Navigate to Permission Screen
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (_) => HealthPermissionScreen( // FIXED: Corrected class name
+        age: widget.age,
+        height: widget.height,
+        weight: weight.toInt(),
+        bmi: bmi,
+      ),
+    ),
+  );
+},
                 child: const Text(
                   "Finish",
                   style: TextStyle(fontSize: 18, color: Colors.white),
