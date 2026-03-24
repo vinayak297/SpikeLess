@@ -1,17 +1,6 @@
-# spikeless
+Modern lifestyles involve frequent consumption of sugary drinks, processed snacks, and high-glycemic foods, often combined with low physical activity and poor sleep. Most people are unaware of how often these habits trigger glucose spikes in the body, which over time can contribute to insulin resistance, weight gain, prediabetes, and other metabolic health issues. The main challenge is not just sugar consumption itself, but the lack of simple tools that help individuals understand how their daily behaviors collectively impact their metabolic risk.
 
-A new Flutter project.
+SpikeLess addresses this gap by helping users become aware of their sugar intake patterns and overall lifestyle impact on metabolic health. The app collects basic personal information and allows users to log sugary foods while also considering activity levels and sleep patterns. Using this information, it generates a dynamic risk score and provides simple insights and corrective suggestions that encourage healthier habits. By turning everyday choices into understandable feedback, SpikeLess helps users gradually reduce sugar spikes and make more informed lifestyle decisions.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![1773603133830](https://github.com/user-attachments/assets/c859baeb-d9df-4ddd-bade-0cf753197043)
+![1773603134032](https://github.com/user-attachments/assets/0eb1a196-2123-43a1-a5d2-6bf3bcfc4d92)
